@@ -254,7 +254,13 @@ To configure a module with `apostrophe-site`, all you have to do is make sure it
 
 In a nutshell: you must export a factory function, and it must have a constructor as its `Construct` property.
 
-You can write custom modules in `lib/modules`, or install them with npm. If you use `lib/modules`, your module's code must load from `lib/modules/mymodulename/index.js`.
+## Publishing Modules
+
+You can write custom modules in `lib/modules` for your project-specific needs, or install them with npm. If you use `lib/modules`, your module's code must load from `lib/modules/mymodulename/index.js`.
+
+## Limitations
+
+Currently `extend` does not check `lib/modules`, so the module you are extending must be published in npm. Most of the time we extend modules like `apostrophe-blog` and `apostrophe-snippets` in simple project-specific ways, so this isn't much of a problem so far.
 
 ## More Modules, More Documentation
 
