@@ -278,6 +278,7 @@ Currently `extend` does not check `lib/modules`, so the module you are extending
 
 ## Changelog
 
+0.1.3: don't forget the search page's page loader function
 0.1.2: removed noisy logging
 0.1.1: Fixed a typo that prevented the `global` virtual page from loading by default.
 
