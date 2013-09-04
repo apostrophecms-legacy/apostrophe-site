@@ -310,7 +310,7 @@ function AposSite(options) {
     // Always set up the page loaders for any active modules that have them,
     // and for a virtual page named "global" which is super handy for footers etc.
 
-    var loaders = [ 'global' ];
+    var loaders = [ 'global', self.pages.searchLoader ];
 
     _.each(self.modules, function(module, name) {
       if (module.loader) {
