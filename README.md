@@ -18,6 +18,8 @@ Create a new git project, then run `npm install apostrophe-site` to install the 
 
 Here's an `app.js` that demonstrates most of the options. Most of this is optional, of course. `root`, `shortName`, `hostName`, `adminPassword` and `sessionSecret` are required.
 
+```javascript
+
     var site = require('apostrophe-site')({
       // Allows apostrophe-sites to require stuff
       // on our behalf and also find our root folder
@@ -157,6 +159,8 @@ Here's an `app.js` that demonstrates most of the options. Most of this is option
       },
     });
 
+```
+
 ## Overriding the Templates of a Module
 
 First `npm install` and configure `apostrophe-blog`. Then create a `lib/modules/apostrophe-blog/views` folder in your project. Copy any templates you wish to customize from the npm module's views folder to `lib/modules/apostrophe-blog/views`.
@@ -168,7 +172,7 @@ Boom! Apostrophe will automatically look first at your "project level" module fo
 You can override a module more than once, for instance to set up two things that are similar in spirit to a blog. Just create folders in `lib/modules`, with your `views` overrides, and configure them in `app.js` via the `modules` option as shown above. Then use the `extend` property to tell Apostrophe what module you're extending.
 
 You'll want to set the `name` and `instance` options so the database can distinguish between your stories and regular blog posts:
-
+```javascript
     stories: {
       extend: 'apostrophe-blog',
       name: 'stories',
@@ -180,7 +184,7 @@ You'll want to set the `name` and `instance` options so the database can disting
         }
       ]
     }
-
+```
 Note that you will need to copy the `new`, `edit` and `manage` templates to your `views` folder and fix any references to `blog` and `blog-post` to refer to `stories` and `story`.
 
 ## Overriding the Schema of a Module: Adding Custom Properties
@@ -192,7 +196,7 @@ As seen above, you can add and alter the properties of blog posts and similar th
 If you really need to change a module's behavior, for instance changing what the page loader function does or the way it fetches data from the database, you'll need to subclass it. But we've made subclassing much easier. Just create an `index.js` file in your `lib/modules/mymodulename` folder.
 
 Here's a really simple subclass that changes the way the `index` method of the blog behaves so that a featured story is available to the `index.html` template as the `featured` variable in nunjucks:
-
+```javascript
     module.exports = stories;
 
     function stories(options, callback) {
@@ -222,7 +226,7 @@ Here's a really simple subclass that changes the way the `index` method of the b
       }
 
     };
-
+```
 Note the use of `module.exports.Super`. This automatically points to the base class constructor.
 
 Confused? Just remember to follow this pattern and put your method overrides after the call to `module.exports.Super`.
@@ -236,7 +240,7 @@ If it doesn't smell like a blog post, you probably want to subclass snippets ins
 You can configure modules that have nothing at all to do with snippets, too. Our own RSS and Twitter modules, for instance.
 
 To configure a module with `apostrophe-site`, all you have to do is make sure it looks like this:
-
+```javascript
     module.exports = factory;
 
     function factory(options, callback) {
@@ -251,7 +255,7 @@ To configure a module with `apostrophe-site`, all you have to do is make sure it
 
     // Export the constructor so others can subclass
     factory.Construct = Construct;
-
+```
 In a nutshell: you must export a factory function, and it must have a constructor as its `Construct` property.
 
 ## Publishing Modules
