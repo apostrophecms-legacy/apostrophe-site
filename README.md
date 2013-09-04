@@ -161,6 +161,16 @@ Here's an `app.js` that demonstrates most of the options. Most of this is option
 
 ```
 
+## Adding Modules to the Admin Bar
+
+Adding a module to the `modules` property above does most of the work, but you do need to add it to the admin bar when appropriate. For instance, you'll want the "blog" menu to be added at the top of the page when the blog module is installed.
+
+In our sandbox site or a project cloned from it, you would do that in `outerLayout.html`. Just look for calls like this one:
+
+    {{ aposBlogMenu({ edit: permissions.edit }) }}
+
+Conversely, if you choose not to include a module but haven't removed it from the admin bar, don't be surprised when you get a template error.
+
 ## Overriding the Templates of a Module
 
 First `npm install` and configure `apostrophe-blog`. Then create a `lib/modules/apostrophe-blog/views` folder in your project. Copy any templates you wish to customize from the npm module's views folder to `lib/modules/apostrophe-blog/views`.
@@ -265,6 +275,10 @@ You can write custom modules in `lib/modules` for your project-specific needs, o
 ## Limitations
 
 Currently `extend` does not check `lib/modules`, so the module you are extending must be published in npm. Most of the time we extend modules like `apostrophe-blog` and `apostrophe-snippets` in simple project-specific ways, so this isn't much of a problem so far.
+
+## Changelog
+
+0.1.1: Fixed a typo that prevented the `global` virtual page from loading by default.
 
 ## More Modules, More Documentation
 
