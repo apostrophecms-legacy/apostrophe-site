@@ -310,7 +310,7 @@ function AposSite(options) {
     // Always set up the page loaders for any active modules that have them,
     // and for a virtual page named "global" which is super handy for footers etc.
 
-    var loaders = [ ' global' ];
+    var loaders = [ 'global' ];
 
     _.each(self.modules, function(module, name) {
       if (module.loader) {
@@ -322,6 +322,9 @@ function AposSite(options) {
     if (options.pages && options.pages.load) {
       loaders = loaders.concat(options.pages.load);
     }
+
+    console.log('heres the loaders array');
+    console.log(loaders);
 
     // Extend sensible defaults with custom settings
     var pagesOptions = {};
