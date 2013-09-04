@@ -323,9 +323,6 @@ function AposSite(options) {
       loaders = loaders.concat(options.pages.load);
     }
 
-    console.log('heres the loaders array');
-    console.log(loaders);
-
     // Extend sensible defaults with custom settings
     var pagesOptions = {};
     extend(true, pagesOptions, {
