@@ -157,6 +157,15 @@ Here's an `app.js` that demonstrates most of the options. Most of this is option
       afterInit: function(callback) {
         return callback(null);
       },
+
+      sanitizeHtml: {
+        // Any options that can be passed to the sanitize-html
+        // module are valid here. Used to adjust the way we filter
+        // HTML saved in the rich text editor. You probably want
+        // to stick with our standard set of allowed tags and
+        // encourage users to respect your design rather than
+        // fighting it
+      }
     });
 
 ```
