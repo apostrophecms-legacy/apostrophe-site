@@ -20,6 +20,9 @@ function AposSite(options) {
   self.apos = require('apostrophe')();
   self.root = options.root;
   self.rootDir = path.dirname(self.root.filename);
+  // If you don't like our default set of allowed tags and attributes. This must
+  // be generous enough to encompass at least all the tags in your styles menu, etc.
+  self.sanitizeHtmlOptions = options.sanitizeHtml;
 
   // Fetch local overrides for this server, like minify: true or uploadfs configuration
   if (fs.existsSync(self.rootDir + '/data/local.js')) {
@@ -138,7 +141,8 @@ function AposSite(options) {
       locals: self.locals,
       // Allows us to extend shared layouts
       partialPaths: [ self.rootDir + '/views/global' ],
-      minify: self.minify
+      minify: self.minify,
+      sanitizeHtml: self.sanitizeHtmlOptions
     }, callback);
   }
 
