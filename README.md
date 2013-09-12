@@ -268,8 +268,12 @@ To configure a module with `apostrophe-site`, all you have to do is make sure it
 
     function Construct(options, callback) {
       var self = this;
-      // Add a bunch of methods to self here
-      return callback(null);
+      // Add a bunch of methods to self here, then...
+
+      // Invoke the callback. This must happen on next tick or later!
+      return process.nextTick(function() {
+        return callback(null);
+      });
     }
 
     // Export the constructor so others can subclass
