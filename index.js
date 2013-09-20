@@ -57,8 +57,14 @@ function AposSite(options) {
   if (!options.sessionSecret) {
     throw "Specify the `sessionSecret` option. This should be a secure password not used for any other purpose.";
   }
+  self.title = options.title;
   self.sessionSecret = options.sessionSecret;
   self.locals = options.locals || {};
+  _.defaults(self.locals, {
+    siteTitle: self.title,
+    shortName: self.shortName,
+    hostName: self.hostName
+  });
   self.minify = options.minify;
 
   var uploadfsDefaultSettings = {
@@ -202,6 +208,10 @@ function AposSite(options) {
           // right folder name for templates, so we can skip
           // index.js locally entirely or have one that doesn't bother
           // with that tedious step
+
+          // For access to the apostrophe-site instance
+          var site = self;
+
           var InlineConstruct = function(optionsArg, callback) {
             var self = this;
             // Locate the constructor of the base. This ought to be
@@ -222,6 +232,12 @@ function AposSite(options) {
             // through apos.cssName. So "apostrophe-blog" becomes /my-blog.
             var myConstructor = guessConstructor(name);
             options.modules = (options.modules || []).concat([{ dir: localFolder, name: 'my' + myConstructor }]);
+            // Provide information about the site to each module
+            options.site = {
+              title: site.title,
+              shortName: site.shortName,
+              hostName: site.hostName
+            };
             return Super.call(self, options, callback);
           };
           var inlineFactory = function(options, callback) {
