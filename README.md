@@ -32,6 +32,9 @@ Here's an `app.js` that demonstrates most of the options. Most of this is option
       // Hostname you plan to give your site
       hostName: 'mysite.com',
 
+      // Title of your site. Used as a prefix to page titles and feed titles by default
+      title: 'My Site',
+
       // Apostrophe sizes your images to several awesome sizes right out of the box,
       // but we're greedy and we want something bigger than full (1280)
       addImageSizes: [
@@ -240,6 +243,7 @@ Here's a really simple subclass that changes the way the `index` method of the b
         });
       };
 
+      // Must wait at least until next tick to invoke callback!
       if (callback) {
         process.nextTick(function() { return callback(null); });
       }
@@ -280,6 +284,18 @@ To configure a module with `apostrophe-site`, all you have to do is make sure it
     factory.Construct = Construct;
 ```
 In a nutshell: you must export a factory function, and it must have a constructor as its `Construct` property.
+
+## Options Provided to Modules
+
+In addition to the options you specify in `app.js`, all modules receive:
+
+`site`: an object containing `title`, `shortName` and `hostName` properties, as configured in `app.js`.
+
+`modules`: an array of objects with `web` and `fs` properties, specifying the web and filesystem paths to each folder in the chain of overrides, which is useful if you wish to allow project-level overrides via `lib/modules` of views provided by an npm module.
+
+## Accessing Other Modules
+
+After all modules have been initialized, `apostrophe-site` calls the `setBridge` method on each module that has one. This method receives an object containing all of the modules as properties. The `people` module, for instance, uses the bridge to access the `groups` module.
 
 ## Publishing Modules
 
