@@ -79,6 +79,10 @@ function AposSite(options) {
   uploadfsSettings = {};
   extend(true, uploadfsSettings, uploadfsDefaultSettings);
   extend(true, uploadfsSettings, options.uploadfs || {});
+  if (options.uploadsUrl) {
+    // for bc
+    uploadfsSettings.uploadsUrl = options.uploadsUrl;
+  }
 
   appy.bootstrap({
     // Don't bother with viewEngine, we'll use apos.partial() if we want to
