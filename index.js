@@ -108,6 +108,8 @@ function AposSite(options) {
       host: (options.db && options.db.host) || 'localhost',
       port: (options.db && options.db.port) || 27017,
       name: (options.db && options.db.name) || options.shortName,
+      user: (options.db && options.db.user) || undefined,
+      password: (options.db && options.db.password) || undefined,
       collections: (options.db && options.db.collections) || []
     },
 
