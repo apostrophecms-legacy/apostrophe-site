@@ -230,7 +230,7 @@ Here's a really simple subclass that changes the way the `index` method of the b
 
       module.exports.Super.call(this, options, null);
 
-      self.superIndex = self.index;
+      var superIndex = self.index;
       self.index = function(req, snippets, callback) {
         self.get(req, { tags: 'featured' }, { limit: 1 }, function(err, results) {
           if(err) {
@@ -239,7 +239,7 @@ Here's a really simple subclass that changes the way the `index` method of the b
           if(results.total > 0) {
             req.extras.featured = results.snippets[0];
           }
-          self.superIndex(req, snippets, callback);
+          superIndex(req, snippets, callback);
         });
       };
 
