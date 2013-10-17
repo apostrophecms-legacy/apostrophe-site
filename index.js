@@ -367,6 +367,12 @@ function AposSite(options) {
 
     var appGetArguments = [ '*' ];
     appGetArguments = appGetArguments.concat(pagesOptions.middleware || []);
+    // Allow each module to add pages.serve middleware too
+    _.each(self.modules, function(module) {
+      if (module.middleware) {
+        appGetArguments = appGetArguments.concat(module.middleware);
+      }
+    });
     appGetArguments.push(serve);
     self.app.get.apply(self.app, appGetArguments);
 
