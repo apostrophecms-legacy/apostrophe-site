@@ -154,7 +154,8 @@ function AposSite(options) {
       // Allows us to extend shared layouts
       partialPaths: [ self.rootDir + '/views/global' ],
       minify: self.minify,
-      sanitizeHtml: self.sanitizeHtmlOptions
+      sanitizeHtml: self.sanitizeHtmlOptions,
+      lockups: options.lockups || {}
     }, callback);
   }
 
