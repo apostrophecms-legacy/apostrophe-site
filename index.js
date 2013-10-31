@@ -105,6 +105,7 @@ function AposSite(options) {
     sessionSecret: self.sessionSecret,
 
     db: {
+      uri: (options.db && options.db.uri) || undefined,
       host: (options.db && options.db.host) || 'localhost',
       port: (options.db && options.db.port) || 27017,
       name: (options.db && options.db.name) || options.shortName,
