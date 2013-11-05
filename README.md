@@ -156,6 +156,18 @@ Here's an `app.js` that demonstrates most of the options. Most of this is option
         return callback(null);
       },
 
+      // Just before apos.endAsset. Last chance to push any assets. Usually the
+      // `assets` option above, and calling `pushAsset` from your modules,
+      // is good enough.
+
+      beforeEndAssets: function(callback) {
+        // Apostrophe already loads these for logged-out users, but we
+        // want them all the time in this project.
+        site.apos.pushAsset('script', { name: 'vendor/blueimp-iframe-transport', when: 'always' });
+        site.apos.pushAsset('script', { name: 'vendor/blueimp-fileupload', when: 'always' });
+        return callback(null);
+      },
+
       // Just before listen. Last chance to set up anything
       afterInit: function(callback) {
         return callback(null);

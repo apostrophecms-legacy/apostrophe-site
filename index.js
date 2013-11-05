@@ -395,7 +395,17 @@ function AposSite(options) {
   }
 
   function endAssets(callback) {
-    return self.apos.endAssets(callback);
+    return async.series({
+      beforeEndAssets: function(callback) {
+        if (!options.beforeEndAssets) {
+          return callback(null);
+        }
+        return options.beforeEndAssets(callback);
+      },
+      endAssets: function(callback) {
+        return self.apos.endAssets(callback);
+      }
+    }, callback);
   }
 
   function afterInit(callback) {
