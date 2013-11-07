@@ -45,6 +45,14 @@ Here's an `app.js` that demonstrates most of the options. Most of this is option
         }
       ],
 
+      // By default the media library shows everyone's media until the user decides to
+      // change that with the "uploaded by" filter. Want the default to go the other way?
+      // Set the "owner" option as shown commented out below
+
+      mediaLibrary: {
+        // owner: 'user'
+      },
+
       // You can always log in at /login as admin, with this password
       adminPassword: 'SOMETHING SECURE PLEASE',
 

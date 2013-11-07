@@ -156,6 +156,7 @@ function AposSite(options) {
       partialPaths: [ self.rootDir + '/views/global' ],
       minify: self.minify,
       sanitizeHtml: self.sanitizeHtmlOptions,
+      mediaLibrary: options.mediaLibrary || {},
       lockups: options.lockups || {}
     }, callback);
   }
