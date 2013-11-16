@@ -89,6 +89,11 @@ function AposSite(options) {
     // render anything directly
     auth: self.apos.appyAuth({
       loginPage: function(data) {
+        // TODO: this is a hack and doesn't allow for some other module to
+        // supply the password reset capability
+        if (self.modules['apostrophe-people']) {
+          data.resetAvailable = true;
+        }
         return self.pages.decoratePageContent({ content: self.apos.partial('login', data), when: 'anon' });
       },
       redirect: function(user) {
