@@ -342,6 +342,7 @@ Currently `extend` does not check `lib/modules`, so the module you are extending
 
 ## Changelog
 
+0.1.12: provide a mailer
 0.1.2: don't forget the search page's page loader function
 0.1.1: Fixed a typo that prevented the `global` virtual page from loading by default.
 
