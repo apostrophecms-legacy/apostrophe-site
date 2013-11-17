@@ -16,7 +16,7 @@ Create a new git project, then run `npm install apostrophe-site` to install the 
 
 ## Configuring Your Site
 
-Here's an `app.js` that demonstrates most of the options. Most of this is optional, of course. `root`, `shortName`, `hostName`, `adminPassword` and `sessionSecret` are required.
+Here's an `app.js` that demonstrates most of the options. Most of this is optional, of course. `root`, `shortName`, `hostName`, `adminPassword` and `sessionSecret` are required, and you almost certainly will want to add a few modules. Everything else is totally skippable.
 
 ```javascript
 
@@ -51,6 +51,15 @@ Here's an `app.js` that demonstrates most of the options. Most of this is option
 
       mediaLibrary: {
         // owner: 'user'
+      },
+
+      // Set up email transport via nodemailer. By default sendmail is used because
+      // it requires no configuration, but you may use any valid transport, see the
+      // nodemailer module documentation.
+
+      mailer: {
+        transport: 'sendmail',
+        transportOptions: {}
       },
 
       // You can always log in at /login as admin, with this password
@@ -309,13 +318,19 @@ In a nutshell: you must export a factory function, and it must have a constructo
 
 In addition to the options you specify in `app.js`, all modules receive:
 
+`apos`: the `apos` object, a singleton which provides core methods for content management. See the [apostrophe](http://github.com/punkave/apostrophe) module documentation.
+
+`pages`: the `pages` object, a singleton which provides methods for dealing with the page tree. See the [apostrophe-pages](http://github.com/punkave/apostrophe) module documentation.
+
+`mailer`: a `nodemailer` transport object, ready to send email as needed. See the [nodemailer](http://www.nodemailer.com/) documentation.
+
 `site`: an object containing `title`, `shortName` and `hostName` properties, as configured in `app.js`.
 
-`modules`: an array of objects with `web` and `fs` properties, specifying the web and filesystem paths to each folder in the chain of overrides, which is useful if you wish to allow project-level overrides via `lib/modules` of views provided by an npm module.
+`modules`: an array of objects with `web` and `fs` properties, specifying the web and filesystem paths to each folder in the chain of overrides, which is useful if you wish to allow project-level overrides via `lib/modules` of views provided by an npm module. You can take advantage of this easily if you use the `mixinModuleAssets` and `serveAssets` mixins; see `assets.js` in the apostrophe module for documentation.
 
 ## Accessing Other Modules
 
-After all modules have been initialized, `apostrophe-site` calls the `setBridge` method on each module that has one. This method receives an object containing all of the modules as properties. The `people` module, for instance, uses the bridge to access the `groups` module.
+After all modules have been initialized, `apostrophe-site` calls the `setBridge` method on each module that has one. This method receives an object containing all of the modules as properties. The `people` module, for instance, uses the bridge to access the `groups` module. Note that this is not called until after all modules have invoked their initialization callback.
 
 ## Publishing Modules
 

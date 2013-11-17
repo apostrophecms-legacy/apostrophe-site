@@ -9,6 +9,7 @@ var fs = require('fs');
 var path = require('path');
 var _ = require('underscore');
 var extend = require('extend');
+var nodemailer = require('nodemailer');
 
 module.exports = function(options) {
   return new AposSite(options);
@@ -83,6 +84,13 @@ function AposSite(options) {
     // for bc
     uploadfsSettings.uploadsUrl = options.uploadsUrl;
   }
+
+  var mailerOptions = options.mailer || {};
+  _.defaults(mailerOptions, {
+    transport: 'sendmail',
+    transportOptions: {},
+  });
+  self.mailer = nodemailer.createTransport(mailerOptions.transport, mailerOptions.transportOptions);
 
   appy.bootstrap({
     // Don't bother with viewEngine, we'll use apos.partial() if we want to
@@ -185,7 +193,8 @@ function AposSite(options) {
       _.defaults(config, {
         app: self.app,
         apos: self.apos,
-        pages: self.pages
+        pages: self.pages,
+        mailer: self.mailer
       });
       var localFolder = self.rootDir + '/lib/modules/' + name;
       var localIndex = localFolder + '/index.js';

@@ -6,7 +6,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "repository": "",
+  "repository": "https://github.com/punkave/apostrophe-site.git",
   "keywords": [
     "apostrophe",
     "cms"
@@ -20,6 +20,7 @@
     "appy": "~0.1.29",
     "async": "~0.2.9",
     "underscore": "~1.5.1",
-    "extend": "~1.2.0"
+    "extend": "~1.2.0",
+    "nodemailer": "~0.5.6"
   }
 }
