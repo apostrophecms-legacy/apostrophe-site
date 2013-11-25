@@ -159,7 +159,15 @@ Here's an `app.js` that demonstrates most of the options. Most of this is option
       assets: {
         // Loads site.js from public/js
         scripts: [
-          'site'
+          // load this js file all the time, minify it normally
+          'site',
+          {
+            // Load this JS file only when a user is logged in, never minify it.
+            // 'when' could also be 'always'. 'minify' defaults to true
+            name: 'fancy',
+            when: 'user',
+            minify: false
+          }
         ],
         // Loads site.less from public/css
         stylesheets: [

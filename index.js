@@ -398,13 +398,27 @@ function AposSite(options) {
 
   function pushAssets(callback) {
     _.each((options.assets && options.assets.stylesheets) || [], function(name) {
-      pushAsset('stylesheet', name);
+      if (typeof(name) === 'object') {
+        pushAsset('stylesheet', name.name, name);
+      } else {
+        pushAsset('stylesheet', name, {});
+      }
     });
     _.each((options.assets && options.assets.scripts) || [], function(name) {
-      pushAsset('script', name);
+      if (typeof(name) === 'object') {
+        pushAsset('script', name.name, name);
+      } else {
+        pushAsset('script', name, {});
+      }
     });
-    function pushAsset(type, name) {
-      return self.apos.pushAsset(type, name, self.rootDir, '');
+    function pushAsset(type, name, _options) {
+      var options = {
+        fs: self.rootDir,
+        web: '',
+        when: 'always'
+      };
+      extend(true, options, _options);
+      return self.apos.pushAsset(type, name, options);
     }
     return callback();
   }
