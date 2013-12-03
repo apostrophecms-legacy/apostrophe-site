@@ -10,6 +10,7 @@ var path = require('path');
 var _ = require('underscore');
 var extend = require('extend');
 var nodemailer = require('nodemailer');
+var schemas = require('apostrophe-schemas');
 
 module.exports = function(options) {
   return new AposSite(options);
@@ -135,7 +136,7 @@ function AposSite(options) {
       self.app = appArg;
       self.db = dbArg;
 
-      async.series([ createTemp, initUploadfs, initApos, initPages, initModules, bridgeModules, setRoutes, servePages, pushAssets, endAssets, afterInit ], go);
+      async.series([ createTemp, initUploadfs, initApos, initSchemas, initPages, initModules, bridgeModules, setRoutes, servePages, pushAssets, endAssets, afterInit ], go);
     }
   });
 
@@ -174,12 +175,27 @@ function AposSite(options) {
     }, callback);
   }
 
+  function initSchemas(callback) {
+    var schemasOptions = {};
+    extend(true, schemasOptions, options.schemas);
+    schemasOptions.apos = self.apos;
+    schemasOptions.app = self.app;
+    self.schemas = require('apostrophe-schemas')(schemasOptions, callback);
+  }
+
   function initPages(callback) {
     var pagesOptions = {};
     extend(true, pagesOptions, options.pages);
     pagesOptions.apos = self.apos;
     pagesOptions.app = self.app;
-    self.pages = require('apostrophe-pages')(pagesOptions, callback);
+    pagesOptions.schemas = self.schemas;
+    self.pages = require('apostrophe-pages')(pagesOptions, function(err) {
+      if (err) {
+        return callback(err);
+      }
+      self.schemas.setPages(self.pages);
+      return callback(null);
+    });
   }
 
   function initModules(callback) {
@@ -194,6 +210,7 @@ function AposSite(options) {
         app: self.app,
         apos: self.apos,
         pages: self.pages,
+        schemas: self.schemas,
         mailer: self.mailer
       });
       var localFolder = self.rootDir + '/lib/modules/' + name;

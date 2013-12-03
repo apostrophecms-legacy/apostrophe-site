@@ -328,7 +328,9 @@ In addition to the options you specify in `app.js`, all modules receive:
 
 `apos`: the `apos` object, a singleton which provides core methods for content management. See the [apostrophe](http://github.com/punkave/apostrophe) module documentation.
 
-`pages`: the `pages` object, a singleton which provides methods for dealing with the page tree. See the [apostrophe-pages](http://github.com/punkave/apostrophe) module documentation.
+`pages`: the `pages` object, a singleton which provides methods for dealing with the page tree. See the [apostrophe-pages](http://github.com/punkave/apostrophe-pages) module documentation.
+
+`schemas`: the `schemas` object, a singleton which provides methods for dealing with schemas. Most of the time you won't interact with this directly, but you might if you're writing a module that handles moderated submissions and the like. See the [apostrophe-schemas](http://github.com/punkave/apostrophe-schemas) module documentation.
 
 `mailer`: a `nodemailer` transport object, ready to send email as needed. See the [nodemailer](http://www.nodemailer.com/) documentation.
 
