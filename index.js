@@ -113,6 +113,8 @@ function AposSite(options) {
       },
       adminPassword: self.adminPassword
     }),
+	  
+	expressValidator: options.expressValidator,
 
     beforeSignin: self.apos.appyBeforeSignin,
 
