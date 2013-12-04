@@ -9,6 +9,8 @@ var fs = require('fs');
 var path = require('path');
 var _ = require('underscore');
 var extend = require('extend');
+var nodemailer = require('nodemailer');
+var schemas = require('apostrophe-schemas');
 
 module.exports = function(options) {
   return new AposSite(options);
@@ -84,11 +86,23 @@ function AposSite(options) {
     uploadfsSettings.uploadsUrl = options.uploadsUrl;
   }
 
+  var mailerOptions = options.mailer || {};
+  _.defaults(mailerOptions, {
+    transport: 'sendmail',
+    transportOptions: {},
+  });
+  self.mailer = nodemailer.createTransport(mailerOptions.transport, mailerOptions.transportOptions);
+
   appy.bootstrap({
     // Don't bother with viewEngine, we'll use apos.partial() if we want to
     // render anything directly
     auth: self.apos.appyAuth({
       loginPage: function(data) {
+        // TODO: this is a hack and doesn't allow for some other module to
+        // supply the password reset capability
+        if (self.modules['apostrophe-people']) {
+          data.resetAvailable = true;
+        }
         return self.pages.decoratePageContent({ content: self.apos.partial('login', data), when: 'anon' });
       },
       redirect: function(user) {
@@ -105,6 +119,7 @@ function AposSite(options) {
     sessionSecret: self.sessionSecret,
 
     db: {
+      uri: (options.db && options.db.uri) || undefined,
       host: (options.db && options.db.host) || 'localhost',
       port: (options.db && options.db.port) || 27017,
       name: (options.db && options.db.name) || options.shortName,
@@ -121,7 +136,7 @@ function AposSite(options) {
       self.app = appArg;
       self.db = dbArg;
 
-      async.series([ createTemp, initUploadfs, initApos, initPages, initModules, bridgeModules, setRoutes, servePages, pushAssets, endAssets, afterInit ], go);
+      async.series([ createTemp, initUploadfs, initApos, initSchemas, initPages, initModules, bridgeModules, setRoutes, servePages, pushAssets, endAssets, afterInit ], go);
     }
   });
 
@@ -154,8 +169,18 @@ function AposSite(options) {
       // Allows us to extend shared layouts
       partialPaths: [ self.rootDir + '/views/global' ],
       minify: self.minify,
-      sanitizeHtml: self.sanitizeHtmlOptions
+      sanitizeHtml: self.sanitizeHtmlOptions,
+      mediaLibrary: options.mediaLibrary || {},
+      lockups: options.lockups || {}
     }, callback);
+  }
+
+  function initSchemas(callback) {
+    var schemasOptions = {};
+    extend(true, schemasOptions, options.schemas);
+    schemasOptions.apos = self.apos;
+    schemasOptions.app = self.app;
+    self.schemas = require('apostrophe-schemas')(schemasOptions, callback);
   }
 
   function initPages(callback) {
@@ -163,7 +188,14 @@ function AposSite(options) {
     extend(true, pagesOptions, options.pages);
     pagesOptions.apos = self.apos;
     pagesOptions.app = self.app;
-    self.pages = require('apostrophe-pages')(pagesOptions, callback);
+    pagesOptions.schemas = self.schemas;
+    self.pages = require('apostrophe-pages')(pagesOptions, function(err) {
+      if (err) {
+        return callback(err);
+      }
+      self.schemas.setPages(self.pages);
+      return callback(null);
+    });
   }
 
   function initModules(callback) {
@@ -177,7 +209,9 @@ function AposSite(options) {
       _.defaults(config, {
         app: self.app,
         apos: self.apos,
-        pages: self.pages
+        pages: self.pages,
+        schemas: self.schemas,
+        mailer: self.mailer
       });
       var localFolder = self.rootDir + '/lib/modules/' + name;
       var localIndex = localFolder + '/index.js';
@@ -367,6 +401,12 @@ function AposSite(options) {
 
     var appGetArguments = [ '*' ];
     appGetArguments = appGetArguments.concat(pagesOptions.middleware || []);
+    // Allow each module to add pages.serve middleware too
+    _.each(self.modules, function(module) {
+      if (module.middleware) {
+        appGetArguments = appGetArguments.concat(module.middleware);
+      }
+    });
     appGetArguments.push(serve);
     self.app.get.apply(self.app, appGetArguments);
 
@@ -375,19 +415,43 @@ function AposSite(options) {
 
   function pushAssets(callback) {
     _.each((options.assets && options.assets.stylesheets) || [], function(name) {
-      pushAsset('stylesheet', name);
+      if (typeof(name) === 'object') {
+        pushAsset('stylesheet', name.name, name);
+      } else {
+        pushAsset('stylesheet', name, {});
+      }
     });
     _.each((options.assets && options.assets.scripts) || [], function(name) {
-      pushAsset('script', name);
+      if (typeof(name) === 'object') {
+        pushAsset('script', name.name, name);
+      } else {
+        pushAsset('script', name, {});
+      }
     });
-    function pushAsset(type, name) {
-      return self.apos.pushAsset(type, name, self.rootDir, '');
+    function pushAsset(type, name, _options) {
+      var options = {
+        fs: self.rootDir,
+        web: '',
+        when: 'always'
+      };
+      extend(true, options, _options);
+      return self.apos.pushAsset(type, name, options);
     }
     return callback();
   }
 
   function endAssets(callback) {
-    return self.apos.endAssets(callback);
+    return async.series({
+      beforeEndAssets: function(callback) {
+        if (!options.beforeEndAssets) {
+          return callback(null);
+        }
+        return options.beforeEndAssets(callback);
+      },
+      endAssets: function(callback) {
+        return self.apos.endAssets(callback);
+      }
+    }, callback);
   }
 
   function afterInit(callback) {
