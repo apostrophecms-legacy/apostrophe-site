@@ -94,6 +94,9 @@ function AposSite(options) {
   self.mailer = nodemailer.createTransport(mailerOptions.transport, mailerOptions.transportOptions);
 
   appy.bootstrap({
+    // Allows gzip transfer encoding to be shut off if desired
+    compress: options.compress,
+
     // Don't bother with viewEngine, we'll use apos.partial() if we want to
     // render anything directly
     auth: self.apos.appyAuth({

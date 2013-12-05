@@ -35,6 +35,10 @@ Here's an `app.js` that demonstrates most of the options. Most of this is option
       // Title of your site. Used as a prefix to page titles and feed titles by default
       title: 'My Site',
 
+      // This defaults to true and delivers HTML, CSS and JS much faster via
+      // gzip transfer encoding. But you can set it to false if you must
+      compress: true,
+
       // Apostrophe sizes your images to several awesome sizes right out of the box,
       // but we're greedy and we want something bigger than full (1280)
       addImageSizes: [
