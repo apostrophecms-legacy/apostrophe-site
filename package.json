@@ -14,7 +14,7 @@
   "author": "P'unk Avenue LLC",
   "license": "MIT",
   "dependencies": {
-    "uploadfs": "~0.3.14",
+    "uploadfs": "~1.0.0",
     "apostrophe-pages": "~0.1.39",
     "apostrophe-schemas": "~0.1.0",
     "apostrophe": "~0.4.109",
