@@ -170,11 +170,16 @@ function AposSite(options) {
   }
 
   function initApos(callback) {
+    // Let the apostrophe module know to pass the site object as the first
+    // argument to tasks that accept a fourth argument
+    self.apos._taskContext = self;
+
     return self.apos.init({
       db: self.db,
       app: self.app,
       uploadfs: self.uploadfs,
       locals: self.locals,
+      filterTag: options.filterTag,
       // Allows us to extend shared layouts
       partialPaths: [ self.rootDir + '/views/global' ],
       minify: self.minify,
