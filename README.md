@@ -154,7 +154,9 @@ Here's an `app.js` that demonstrates most of the options. Most of this is option
 
       locals: {
         // Extra locals visible to every nunjucks template. Functions and
-        // data are both fair game
+        // data are both fair game. You may also pass a function that takes
+        // the site object as its sole argument and returns an object containing
+        // the desired locals as properties.
         embiggen: function(s) {
           return s * 1000;
         }

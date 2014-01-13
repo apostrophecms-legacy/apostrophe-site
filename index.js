@@ -19,6 +19,7 @@ module.exports = function(options) {
 function AposSite(options) {
   var self = this;
 
+  var localJsLocals = {};
   self.apos = require('apostrophe')();
   self.root = options.root;
   self.rootDir = path.dirname(self.root.filename);
@@ -29,6 +30,11 @@ function AposSite(options) {
   // Fetch local overrides for this server, like minify: true or uploadfs configuration
   if (fs.existsSync(self.rootDir + '/data/local.js')) {
     var local = require(self.rootDir + '/data/local.js');
+    // There may be nunjucks locals; if we just merge them in, we'll
+    // clobber options.locals if it is a function. Set it aside to
+    // merge later. -Tom
+    localJsLocals = local.locals;
+    delete local.locals;
     extend(true, options, local);
   }
 
@@ -62,6 +68,11 @@ function AposSite(options) {
   self.title = options.title;
   self.sessionSecret = options.sessionSecret;
   self.locals = options.locals || {};
+  if (typeof(self.locals) === 'function') {
+    // We need access to the site object inside a function
+    self.locals = self.locals(self);
+  }
+  extend(true, self.locals, localJsLocals);
   _.defaults(self.locals, {
     siteTitle: self.title,
     shortName: self.shortName,
