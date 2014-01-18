@@ -121,8 +121,11 @@ Here's an `app.js` that demonstrates most of the options. Most of this is option
               return callback(null);
             }
             // Set some custom data to be provided to the nunjucks template.
+            // Anything in the extras object is pushed as data to the
+            // page template.
+            //
             // We have a callback here, so we could go get anything
-            req.page.extras.fanciness = true;
+            req.extras.fanciness = true;
             return callback(null);
           }
         ],
