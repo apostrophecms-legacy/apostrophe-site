@@ -11,6 +11,7 @@ var _ = require('underscore');
 var extend = require('extend');
 var nodemailer = require('nodemailer');
 var schemas = require('apostrophe-schemas');
+var i18n = require('i18n');
 
 module.exports = function(options) {
   return new AposSite(options);
@@ -104,6 +105,15 @@ function AposSite(options) {
   });
   self.mailer = nodemailer.createTransport(mailerOptions.transport, mailerOptions.transportOptions);
 
+  var i18nOptions = options.i18n || {};
+  _.defaults(i18nOptions, {
+    locales: ['en'],
+    cookie: 'apos_language',
+    directory: self.rootDir + '/locales'
+  });
+
+  i18n.configure(i18nOptions);
+
   appy.bootstrap({
     // We're not sure if appy is installed as our dependency
     // or as the project's, but we know that WE are a direct
@@ -150,6 +160,17 @@ function AposSite(options) {
 
     // Supplies LESS middleware
     static: self.rootDir + '/public',
+
+    middleware: [
+      i18n.init,
+      function (req, res, next) {
+        self.apos.addLocal('__', function(text, render){
+          return i18n.__.apply(req, arguments);
+        });
+
+        next();
+      }
+    ],
 
     ready: function(appArg, dbArg)
     {
