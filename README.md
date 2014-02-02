@@ -2,6 +2,10 @@
 
 The Apostrophe Site module makes it easy to build websites with the [Apostrophe](http://github.com/punkave/apostrophe) content management system for Node.
 
+### Code Stability
+
+0.4.x releases receive bug fixes only. For active development, follow 0.5.x releases and/or the master branch in github.
+
 ## Installation
 
 It is easiest to start by cloning the [Apostrophe sandbox project](http://github.com/punkave/apostrophe-sandbox) and pushing it up to your own repository. But skipping that step is pretty easy too. Let's assume you're starting from scratch.
