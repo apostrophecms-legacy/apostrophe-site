@@ -15,9 +15,9 @@
   "license": "MIT",
   "dependencies": {
     "uploadfs": "~1.1.0",
-    "apostrophe-pages": "~0.1.39",
-    "apostrophe-schemas": "~0.1.0",
-    "apostrophe": "~0.4.109",
+    "apostrophe-pages": "~0.4.x",
+    "apostrophe-schemas": "~0.4.x",
+    "apostrophe": "~0.4.x",
     "appy": "~0.1.29",
     "async": "~0.2.9",
     "underscore": "~1.5.1",
