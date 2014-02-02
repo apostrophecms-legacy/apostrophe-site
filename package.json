@@ -1,6 +1,6 @@
 {
   "name": "apostrophe-site",
-  "version": "0.4.0",
+  "version": "0.4.1",
   "description": "Create sites powered by the Apostrophe 2 CMS with a minimum of boilerplate code",
   "main": "index.js",
   "scripts": {
