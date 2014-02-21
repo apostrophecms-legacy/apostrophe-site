@@ -133,7 +133,7 @@ function AposSite(options) {
         if (self.modules['apostrophe-people']) {
           data.resetAvailable = true;
         }
-        return self.pages.decoratePageContent({ content: self.apos.partial('login', data), when: 'anon' });
+        return self.apos.decoratePageContent({ content: self.apos.partial('login', data), when: 'anon' });
       },
       redirect: function(user) {
         if (options.redirectAfterLogin) {
