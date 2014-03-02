@@ -214,6 +214,15 @@ Here's an `app.js` that demonstrates most of the options. Most of this is option
         // to stick with our standard set of allowed tags and
         // encourage users to respect your design rather than
         // fighting it
+      },
+
+      // A simple way to alter the results of every call to apos.get, and thus
+      // every page, snippet, blog post, etc. The retrieved documents will be
+      // in results.pages. Be aware that this property does not always exist,
+      // as apos.get is sometimes used just to fetch distinct tags or
+      // other metadata.
+      afterGet: function(req, results, callback) {
+
       }
     });
 
