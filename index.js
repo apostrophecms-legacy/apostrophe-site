@@ -127,13 +127,13 @@ function AposSite(options) {
     // Don't bother with viewEngine, we'll use apos.partial() if we want to
     // render anything directly
     auth: self.apos.appyAuth({
-      loginPage: function(data, req, res) {
+      loginPage: function(data, req) {
         // TODO: this is a hack and doesn't allow for some other module to
         // supply the password reset capability
         if (self.modules['apostrophe-people']) {
           data.resetAvailable = true;
         }
-        return self.apos.decoratePageContent({ content: self.apos.partial(req, res, 'login', data), when: 'anon' }, req, res);
+        return self.apos.decoratePageContent({ content: self.apos.partial(req, 'login', data), when: 'anon' }, req);
       },
       redirect: function(user) {
         if (options.redirectAfterLogin) {
