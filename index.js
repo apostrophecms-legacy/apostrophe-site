@@ -162,14 +162,7 @@ function AposSite(options) {
     static: self.rootDir + '/public',
 
     middleware: [
-      i18n.init,
-      function (req, res, next) {
-        self.apos.addLocal('__', function(text, render){
-          return i18n.__.apply(req, arguments);
-        });
-
-        next();
-      }
+      i18n.init
     ],
 
     ready: function(appArg, dbArg)
