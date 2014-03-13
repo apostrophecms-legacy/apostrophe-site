@@ -197,7 +197,8 @@ function AposSite(options) {
       sanitizeHtml: self.sanitizeHtmlOptions,
       mediaLibrary: options.mediaLibrary || {},
       lockups: options.lockups || {},
-      afterGet: options.afterGet
+      afterGet: options.afterGet,
+      rootDir: self.rootDir
     }, callback);
   }
 
