@@ -11,6 +11,7 @@ var _ = require('underscore');
 var extend = require('extend');
 var nodemailer = require('nodemailer');
 var schemas = require('apostrophe-schemas');
+var i18n = require('i18n');
 
 module.exports = function(options) {
   return new AposSite(options);
@@ -104,6 +105,15 @@ function AposSite(options) {
   });
   self.mailer = nodemailer.createTransport(mailerOptions.transport, mailerOptions.transportOptions);
 
+  var i18nOptions = options.i18n || {};
+  _.defaults(i18nOptions, {
+    locales: ['en'],
+    cookie: 'apos_language',
+    directory: self.rootDir + '/locales'
+  });
+
+  i18n.configure(i18nOptions);
+
   appy.bootstrap({
     // We're not sure if appy is installed as our dependency
     // or as the project's, but we know that WE are a direct
@@ -117,13 +127,13 @@ function AposSite(options) {
     // Don't bother with viewEngine, we'll use apos.partial() if we want to
     // render anything directly
     auth: self.apos.appyAuth({
-      loginPage: function(data) {
+      loginPage: function(data, req) {
         // TODO: this is a hack and doesn't allow for some other module to
         // supply the password reset capability
         if (self.modules['apostrophe-people']) {
           data.resetAvailable = true;
         }
-        return self.apos.decoratePageContent({ content: self.apos.partial('login', data), when: 'anon' });
+        return self.apos.decoratePageContent({ content: self.apos.partial(req, 'login', data), when: 'anon' }, req);
       },
       redirect: function(user) {
         if (options.redirectAfterLogin) {
@@ -150,6 +160,10 @@ function AposSite(options) {
 
     // Supplies LESS middleware
     static: self.rootDir + '/public',
+
+    middleware: [
+      i18n.init
+    ],
 
     ready: function(appArg, dbArg)
     {
