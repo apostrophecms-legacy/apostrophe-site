@@ -368,11 +368,36 @@ You can write custom modules in `lib/modules` for your project-specific needs, o
 
 Currently `extend` does not check `lib/modules`, so the module you are extending must be published in npm. Most of the time we extend modules like `apostrophe-blog` and `apostrophe-snippets` in simple project-specific ways, so this isn't much of a problem so far.
 
-## Changelog
+## Internationalization
 
-0.1.12: provide a mailer
-0.1.2: don't forget the search page's page loader function
-0.1.1: Fixed a typo that prevented the `global` virtual page from loading by default.
+Using i18n is simple you enable it by adding the following in your apostrophe-site configuration in app.js:
+
+```javascript
+i18n: {
+    // setup some locales - other locales default to defaultLocale silently
+    locales:['en', 'de'],
+
+    // you may alter a site wide default locale (optional, defaults to 'en')
+    defaultLocale: 'de',
+
+    // sets a custom cookie name to parse locale settings from  - defaults to apos_language (optional)
+    cookie: 'yourcookiename',
+
+    // whether to write new locale information to disk automatically - defaults to true (you will want to shut it off in production)
+    // updateFiles: false
+}
+```
+
+After doing this, you can internationalise text in your own templates with:
+
+    {{ __('A sample string') }}
+
+The `__` local will take care of language detection and will spit out the appropriate string from the JSON files that will be located in the `locales` folder of your project by default. If you look in that folder, you'll see multiple JSON files with a two letter language abbreviation as a filename, for instance:
+
+    en.json
+    de.json
+
+Those will contain all the necessary strings. By default, i18n will automatically put anything new it finds there. However, you can disable this behaviour by setting `updateFiles` to false.
 
 ## More Modules, More Documentation
 
