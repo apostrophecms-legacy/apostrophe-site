@@ -161,7 +161,7 @@ function AposSite(options) {
     // Supplies LESS middleware
     static: self.rootDir + '/public',
 
-    middleware: [ i18n.init ].concat(options.middleware || []),
+    middleware: [ i18n.init ].concat(_.map(options.middleware || [], addSiteToMiddleware)),
 
     ready: function(appArg, dbArg)
     {
@@ -171,6 +171,16 @@ function AposSite(options) {
       async.series([ createTemp, initUploadfs, initApos, initSchemas, initPages, initModules, bridgeModules, setRoutes, servePages, pushAssets, endAssets, afterInit ], go);
     }
   });
+
+  function addSiteToMiddleware(fn) {
+    if (fn.length > 3) {
+      return function(req, res, next) {
+        return fn(self, req, res, next);
+      }
+    } else {
+      return fn;
+    }
+  }
 
   function createTemp(callback) {
     ensureDir(uploadfsSettings.tempPath);
@@ -439,7 +449,7 @@ function AposSite(options) {
     // array of options and use app.get.apply
 
     var appGetArguments = [ '*' ];
-    appGetArguments = appGetArguments.concat(pagesOptions.middleware || []);
+    appGetArguments = appGetArguments.concat(_.map(pagesOptions.middleware || []));
     // Allow each module to add pages.serve middleware too
     _.each(self.modules, function(module) {
       if (module.middleware) {

@@ -78,7 +78,9 @@ Here's an `app.js` that demonstrates most of the options. Most of this is option
       },
 
       // Run some middleware on ALL requests. This happens AFTER
-      // basics are in place like sessions and users and i18n
+      // basics are in place like sessions and users and i18n.
+      // Middleware functions may take an initial "site" argument
+      // in addition to req, res, next
       middleware: [ /* middleware, functions, galore */ ],
 
       sessionSecret: 'SOMETHING RANDOM PLEASE',
@@ -112,6 +114,8 @@ Here's an `app.js` that demonstrates most of the options. Most of this is option
 
         // Run some middleware on the route that serves pages.
         // This is not global middleware, see the top-level middleware option
+        // Middleware functions may take an initial "site" argument
+        // in addition to req, res, next
         middleware: [ /* middleware, functions, galore */ ],
 
         // Custom page loader functions beyond those automatically
