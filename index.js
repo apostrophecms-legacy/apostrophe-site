@@ -161,9 +161,7 @@ function AposSite(options) {
     // Supplies LESS middleware
     static: self.rootDir + '/public',
 
-    middleware: [
-      i18n.init
-    ],
+    middleware: [ i18n.init ].concat(options.middleware || []),
 
     ready: function(appArg, dbArg)
     {

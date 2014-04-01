@@ -77,6 +77,10 @@ Here's an `app.js` that demonstrates most of the options. Most of this is option
         }
       },
 
+      // Run some middleware on ALL requests. This happens AFTER
+      // basics are in place like sessions and users and i18n
+      middleware: [ /* middleware, functions, galore */ ],
+
       sessionSecret: 'SOMETHING RANDOM PLEASE',
 
       // Any options accepted by the apostrophe-pages module,
@@ -106,7 +110,8 @@ Here's an `app.js` that demonstrates most of the options. Most of this is option
           return callback(null);
         }
 
-        // Run some middleware on the route that serves pages
+        // Run some middleware on the route that serves pages.
+        // This is not global middleware, see the top-level middleware option
         middleware: [ /* middleware, functions, galore */ ],
 
         // Custom page loader functions beyond those automatically
