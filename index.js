@@ -229,6 +229,9 @@ function AposSite(options) {
     extend(true, schemasOptions, options.schemas);
     schemasOptions.apos = self.apos;
     schemasOptions.app = self.app;
+    // Allows lib/modules/apostrophe-schemas/views to override
+    // views for schema field types
+    schemasOptions.modules = (schemasOptions.modules || []).concat([ { dir: self.rootDir + '/lib/modules/apostrophe-schemas', name: 'schemas' } ]);
     self.schemas = require('apostrophe-schemas')(schemasOptions, callback);
   }
 
