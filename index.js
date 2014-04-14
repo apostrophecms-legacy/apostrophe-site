@@ -272,14 +272,15 @@ function AposSite(options) {
       var npmFound = false;
       // Factory function accepts options and callback, returns an object to manage this module
       var factory;
-      if (!fs.existsSync(localFolder)) {
+      if ((!fs.existsSync(localFolder)) && (!config.extend)) {
         // Directly installing an npm module with no subclassing of any kind,
         // not even a folder with alternate templates. That's allowed
         factory = self.root.require(npmName);
         npmFound = true;
       } else {
         localFound = true;
-        // Module exists locally. Was it also installed via npm? If so, subclass
+        // Module exists locally. Was it also installed via npm?
+        // If so, subclass
         var base;
         try {
           base = self.root.require(npmName);
