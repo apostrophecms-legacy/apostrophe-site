@@ -73,11 +73,17 @@ Here's an `app.js` that demonstrates most of the options. Most of this is option
       // You can always log in at /login as admin, with this password
       adminPassword: 'SOMETHING SECURE PLEASE',
 
-      redirectAfterLogin: function(user) {
-        if (user.permissions.admin) {
-          return '/awesomepeople';
+      // If a visitor tries to access a secured page, give them
+      // a chance to log in and then be redirected to that page
+      secondChanceLogin: true,
+
+      // Invoked after login if secondChanceLogin is not set or
+      // did not result in a page the user was allowed to see
+      redirectAfterLogin: function(req, callback) {
+        if (req.user.permissions.admin) {
+          return callback('/awesomepeople');
         } else {
-          return '/coolpeople';
+          return callback('/coolpeople');
         }
       },
 

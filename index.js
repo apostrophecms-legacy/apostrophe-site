@@ -125,11 +125,37 @@ function AposSite(options) {
         }
         return self.pages.decoratePageContent({ content: self.apos.partial('login', data), when: 'anon' });
       },
-      redirect: function(user) {
-        if (options.redirectAfterLogin) {
-          return options.redirectAfterLogin(user);
-        }
-        return '/';
+      // Where to go after logging in
+      redirect: function(req, finalCallback) {
+        return async.series({
+          secondChanceLogin: function(callback) {
+            if (!options.secondChanceLogin) {
+              return callback(null);
+            }
+            if (!req.session.aposAfterLogin) {
+              return callback(null);
+            }
+            var url = req.session.aposAfterLogin;
+            delete req.session.aposAfterLogin;
+            return self.apos.getPage(req, url.replace(/\?.*$/, ''), function(err, page, bestPage, remainder) {
+              if (page || bestPage) {
+                return finalCallback(url);
+              }
+              return callback(null);
+            });
+          },
+          redirectAfterLogin: function(callback) {
+            if (!options.redirectAfterLogin) {
+              return callback(null);
+            }
+            if (options.redirectAfterLogin.length < 2) {
+              return finalCallback(options.redirectAfterLogin(req.user));
+            }
+            return options.redirectAfterLogin(req, finalCallback);
+          }
+        }, function(err) {
+          return finalCallback('/');
+        });
       },
       adminPassword: self.adminPassword
     }),
@@ -411,7 +437,8 @@ function AposSite(options) {
     // Extend sensible defaults with custom settings
     var pagesOptions = {};
     extend(true, pagesOptions, {
-      templatePath: self.rootDir + '/views/pages'
+      templatePath: self.rootDir + '/views/pages',
+      secondChanceLogin: options.secondChanceLogin
     });
     extend(true, pagesOptions, options.pages || {});
 
