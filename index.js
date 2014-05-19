@@ -246,7 +246,8 @@ function AposSite(options) {
       mediaLibrary: options.mediaLibrary || {},
       lockups: options.lockups || {},
       afterGet: options.afterGet,
-      rootDir: self.rootDir
+      rootDir: self.rootDir,
+      workflow: options.workflow
     }, callback);
   }
 
