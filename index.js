@@ -247,7 +247,8 @@ function AposSite(options) {
       lockups: options.lockups || {},
       afterGet: options.afterGet,
       rootDir: self.rootDir,
-      workflow: options.workflow
+      workflow: options.workflow,
+      configureNunjucks: options.configureNunjucks
     }, callback);
   }
 
@@ -448,9 +449,10 @@ function AposSite(options) {
 
   function servePages(callback) {
     // Always set up the page loaders for any active modules that have them,
-    // and for a virtual page named "global" which is super handy for footers etc.
+    // and for a virtual page named "global" which is super handy for
+    // footers etc.
 
-    var loaders = [ 'global', self.pages.searchLoader ];
+    var loaders = [ 'global' ];
 
     _.each(self.modules, function(module, name) {
       if (module.loader) {
