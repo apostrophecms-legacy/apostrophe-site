@@ -314,6 +314,14 @@ function AposSite(options) {
           base = self.root.require(npmName);
           npmFound = true;
         } catch (e) {
+          // Real problems need to be really visible.
+          // Unfortunately we have to resort to examining the
+          // error message to distinguish MODULE_NOT_FOUND for
+          // the module itself (which is fine) from MODULE_NOT_FOUND
+          // for one of its dependencies (which is not cool).
+          if (((e.code !== 'MODULE_NOT_FOUND') || (e.toString().indexOf('\'' + npmName + '\'')) === -1)) {
+            throw e;
+          }
           // That's OK, this module simply only exists locally
         }
         if (!base) {
@@ -321,7 +329,7 @@ function AposSite(options) {
           try {
             factory = require(localIndex);
           } catch (e) {
-            console.error('Unable to find ' + localIndex + '. Either you forgot to npm install something, or you forgot to set the extend property for this module.');
+            console.error('Unable to find ' + localIndex + ', or an error took place in that file (see below). Perhaps you forgot to npm install something, or you forgot to set the extend property for this module.');
             throw e;
           }
         } else {
