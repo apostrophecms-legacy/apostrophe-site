@@ -20,6 +20,8 @@ module.exports = function(options) {
 function AposSite(options) {
   var self = this;
 
+  self.options = options;
+
   var localJsLocals = {};
   self.apos = require('apostrophe')();
   self.root = options.root;
@@ -114,6 +116,34 @@ function AposSite(options) {
 
   i18n.configure(i18nOptions);
 
+  var middleware = options.middleware || [];
+
+  var moduleMiddleware;
+
+  // Middleware that allows all the individual modules to
+  // have middleware too
+  middleware.push(function(req, res, next) {
+    if (!moduleMiddleware) {
+      moduleMiddleware = [];
+      // We build this array only once, on the first invocation
+      _.each(self.modules, function(module, name) {
+        if (module.middleware) {
+          moduleMiddleware = moduleMiddleware.concat(module.middleware);
+        }
+      });
+      moduleMiddleware = _.map(moduleMiddleware, addSiteToMiddleware);
+    }
+    // Implement the next() callback chain for the module middleware
+    var n = 0;
+    function iterate() {
+      if (n < moduleMiddleware.length) {
+        return moduleMiddleware[n++](req, res, iterate);
+      }
+      return next();
+    }
+    iterate();
+  });
+
   appy.bootstrap({
     // We're not sure if appy is installed as our dependency
     // or as the project's, but we know that WE are a direct
@@ -124,9 +154,7 @@ function AposSite(options) {
     // Allows gzip transfer encoding to be shut off if desired
     compress: options.compress,
 
-    // Don't bother with viewEngine, we'll use apos.partial() if we want to
-    // render anything directly
-    auth: self.apos.appyAuth({
+    auth: (options.auth === undefined) ? self.apos.appyAuth({
       loginPage: function(data, req) {
         // TODO: this is a hack and doesn't allow for some other module to
         // supply the password reset capability
@@ -136,39 +164,11 @@ function AposSite(options) {
         return self.apos.decoratePageContent({ content: self.apos.partial(req, 'login', data), when: 'anon' }, req);
       },
       // Where to go after logging in
-      redirect: function(req, finalCallback) {
-        return async.series({
-          secondChanceLogin: function(callback) {
-            if (!options.secondChanceLogin) {
-              return callback(null);
-            }
-            if (!req.session.aposAfterLogin) {
-              return callback(null);
-            }
-            var url = req.session.aposAfterLogin;
-            delete req.session.aposAfterLogin;
-            return self.apos.getPage(req, url.replace(/\?.*$/, ''), function(err, page, bestPage, remainder) {
-              if (page || bestPage) {
-                return finalCallback(url);
-              }
-              return callback(null);
-            });
-          },
-          redirectAfterLogin: function(callback) {
-            if (!options.redirectAfterLogin) {
-              return callback(null);
-            }
-            if (options.redirectAfterLogin.length < 2) {
-              return finalCallback(options.redirectAfterLogin(req.user));
-            }
-            return options.redirectAfterLogin(req, finalCallback);
-          }
-        }, function(err) {
-          return finalCallback('/');
-        });
+      redirect: function(req, callback) {
+        return self.apos.authRedirectAfterLogin(req, callback);
       },
       adminPassword: self.adminPassword
-    }),
+    }) : options.auth,
 
     beforeSignin: self.apos.appyBeforeSignin,
 
@@ -187,7 +187,7 @@ function AposSite(options) {
     // Supplies LESS middleware
     static: self.rootDir + '/public',
 
-    middleware: [ i18n.init ].concat(_.map(options.middleware || [], addSiteToMiddleware)),
+    middleware: [ i18n.init ].concat(middleware),
 
     ready: function(appArg, dbArg)
     {
@@ -202,7 +202,7 @@ function AposSite(options) {
     if (fn.length > 3) {
       return function(req, res, next) {
         return fn(self, req, res, next);
-      }
+      };
     } else {
       return fn;
     }
@@ -248,7 +248,9 @@ function AposSite(options) {
       afterGet: options.afterGet,
       rootDir: self.rootDir,
       workflow: options.workflow,
-      configureNunjucks: options.configureNunjucks
+      configureNunjucks: options.configureNunjucks,
+      secondChanceLogin: options.secondChanceLogin,
+      redirectAfterLogin: options.redirectAfterLogin
     }, callback);
   }
 
@@ -287,6 +289,7 @@ function AposSite(options) {
     return async.eachSeries(_.keys(modulesConfig), function(name, callback) {
       var config = modulesConfig[name];
       _.defaults(config, {
+        site: self,
         app: self.app,
         apos: self.apos,
         pages: self.pages,
@@ -361,12 +364,6 @@ function AposSite(options) {
             // through apos.cssName. So "apostrophe-blog" becomes /my-blog.
             var myConstructor = guessConstructor(name);
             options.modules = (options.modules || []).concat([{ dir: localFolder, name: 'my' + myConstructor }]);
-            // Provide information about the site to each module
-            options.site = {
-              title: site.title,
-              shortName: site.shortName,
-              hostName: site.hostName
-            };
             return Super.call(self, options, callback);
           };
           var inlineFactory = function(options, callback) {
@@ -492,10 +489,12 @@ function AposSite(options) {
 
     var appGetArguments = [ '*' ];
     appGetArguments = appGetArguments.concat(_.map(pagesOptions.middleware || []));
-    // Allow each module to add pages.serve middleware too
+    // Allow each module to add pages.serve middleware too via
+    // the pageMiddleware option. See also the plain ol' "middleware"
+    // option, which runs on *all* requests like regular Express middleware
     _.each(self.modules, function(module) {
-      if (module.middleware) {
-        appGetArguments = appGetArguments.concat(module.middleware);
+      if (module.pageMiddleware) {
+        appGetArguments = appGetArguments.concat(module.pageMiddleware);
       }
     });
     appGetArguments.push(serve);

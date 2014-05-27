@@ -85,8 +85,11 @@ Here's an `app.js` that demonstrates most of the options. Most of this is option
 
       // Run some middleware on ALL requests. This happens AFTER
       // basics are in place like sessions and users and i18n.
-      // Middleware functions may take an initial "site" argument
-      // in addition to req, res, next
+      // Middleware functions here may take an initial "site" argument
+      // in addition to req, res, next. Modules may also provide
+      // middleware simply by setting a "middleware" property on
+      // themselves
+
       middleware: [ /* middleware, functions, galore */ ],
 
       sessionSecret: 'SOMETHING RANDOM PLEASE',
@@ -119,9 +122,13 @@ Here's an `app.js` that demonstrates most of the options. Most of this is option
         }
 
         // Run some middleware on the route that serves pages.
-        // This is not global middleware, see the top-level middleware option
+        // This is not global middleware, see the top-level middleware option.
+
         // Middleware functions may take an initial "site" argument
-        // in addition to req, res, next
+        // in addition to req, res, next. Modules may also register
+        // page-serving middleware simply by setting a
+        // pageMiddleware property on themselves
+
         middleware: [ /* middleware, functions, galore */ ],
 
         // Custom page loader functions beyond those automatically
