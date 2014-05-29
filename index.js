@@ -261,7 +261,7 @@ function AposSite(options) {
     schemasOptions.app = self.app;
     // Allows lib/modules/apostrophe-schemas/views to override
     // views for schema field types
-    schemasOptions.modules = (schemasOptions.modules || []).concat([ { dir: self.rootDir + '/lib/modules/apostrophe-schemas', name: 'schemas' } ]);
+    schemasOptions.modules = (schemasOptions.modules || []).concat([ { dir: self.rootDir + '/lib/modules/apostrophe-schemas', name: 'mySchemas' } ]);
     self.schemas = require('apostrophe-schemas')(schemasOptions, callback);
   }
 
@@ -271,6 +271,9 @@ function AposSite(options) {
     pagesOptions.apos = self.apos;
     pagesOptions.app = self.app;
     pagesOptions.schemas = self.schemas;
+    // Allows lib/modules/apostrophe-pages/views to override
+    // views for newPageSettings.html, etc.
+    pagesOptions.modules = (pagesOptions.modules || []).concat([ { dir: self.rootDir + '/lib/modules/apostrophe-pages', name: 'myPages' } ]);
     self.pages = require('apostrophe-pages')(pagesOptions, function(err) {
       if (err) {
         return callback(err);

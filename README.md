@@ -266,6 +266,8 @@ First `npm install` and configure `apostrophe-blog`. Then create a `lib/modules/
 
 Boom! Apostrophe will automatically look first at your "project level" module folder.
 
+*This also works for `apostrophe-schemas` and `apostrophe-pages`, even though they are not configured by the `modules` property.* `lib/modules/apostrophe-schemas/views` may contain overrides for schema field templates, and `lib/modules/apostrophe-pages/views` may contain overrides for `newPageSettings.html` and friends.
+
 ## Overriding a Module With a New Name
 
 You can override a module more than once, for instance to set up two things that are similar in spirit to a blog. Just create folders in `lib/modules`, with your `views` overrides, and configure them in `app.js` via the `modules` option as shown above. Then use the `extend` property to tell Apostrophe what module you're extending.
