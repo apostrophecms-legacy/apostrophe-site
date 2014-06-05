@@ -116,7 +116,9 @@ function AposSite(options) {
 
   i18n.configure(i18nOptions);
 
-  var middleware = options.middleware || [];
+  var middleware = _.map(options.middleware || [], function(fn) {
+    return addSiteToMiddleware(fn);
+  });
 
   var moduleMiddleware;
 
@@ -126,7 +128,7 @@ function AposSite(options) {
     if (!moduleMiddleware) {
       moduleMiddleware = [];
       // We build this array only once, on the first invocation
-      _.each(self.modules, function(module, name) {
+      _.each(self.modules, function(module) {
         if (module.middleware) {
           moduleMiddleware = moduleMiddleware.concat(module.middleware);
         }
@@ -495,7 +497,7 @@ function AposSite(options) {
     // Allow each module to add pages.serve middleware too via
     // the pageMiddleware option. See also the plain ol' "middleware"
     // option, which runs on *all* requests like regular Express middleware
-    _.each(self.modules, function(module) {
+    _.each(self.modules, function(module, name) {
       if (module.pageMiddleware) {
         appGetArguments = appGetArguments.concat(module.pageMiddleware);
       }
