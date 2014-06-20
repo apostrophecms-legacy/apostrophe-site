@@ -458,6 +458,9 @@ function AposSite(options) {
   }
 
   function servePages(callback) {
+    if (self.apos.isTask()) {
+      return callback(null);
+    }
     // Always set up the page loaders for any active modules that have them,
     // and for a virtual page named "global" which is super handy for
     // footers etc.
@@ -509,6 +512,9 @@ function AposSite(options) {
   }
 
   function pushAssets(callback) {
+    if (self.apos.isTask()) {
+      return callback(null);
+    }
     _.each((options.assets && options.assets.stylesheets) || [], function(name) {
       if (typeof(name) === 'object') {
         pushAsset('stylesheet', name.name, name);
@@ -536,6 +542,9 @@ function AposSite(options) {
   }
 
   function endAssets(callback) {
+    if (self.apos.isTask()) {
+      return callback(null);
+    }
     return async.series({
       beforeEndAssets: function(callback) {
         if (!options.beforeEndAssets) {
