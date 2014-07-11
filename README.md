@@ -57,6 +57,11 @@ Here's an `app.js` that demonstrates most of the options. Most of this is option
         // owner: 'user'
       },
 
+      // Normally anyone who can edit a page or article etc. might
+      // introduce new tags. If this is set true, new tags can only
+      // be introduced via the admin tag editor
+      lockTags: false,
+
       // Set up email transport via nodemailer. By default sendmail is used because
       // it requires no configuration, but you may use any valid transport, see the
       // nodemailer module documentation.
