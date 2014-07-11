@@ -252,7 +252,8 @@ function AposSite(options) {
       workflow: options.workflow,
       configureNunjucks: options.configureNunjucks,
       secondChanceLogin: options.secondChanceLogin,
-      redirectAfterLogin: options.redirectAfterLogin
+      redirectAfterLogin: options.redirectAfterLogin,
+      lockTags: options.lockTags
     }, callback);
   }
 
