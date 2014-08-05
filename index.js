@@ -235,6 +235,10 @@ function AposSite(options) {
     // argument to tasks that accept a fourth argument
     self.apos._taskContext = self;
 
+    // TODO: this should probably get everything
+    // that apostrophe-site doesn't consume, so I don't
+    // have to endlessly add new options here. -Tom
+
     return self.apos.init({
       db: self.db,
       app: self.app,
@@ -253,7 +257,8 @@ function AposSite(options) {
       configureNunjucks: options.configureNunjucks,
       secondChanceLogin: options.secondChanceLogin,
       redirectAfterLogin: options.redirectAfterLogin,
-      lockTags: options.lockTags
+      lockTags: options.lockTags,
+      files: options.files
     }, callback);
   }
 
