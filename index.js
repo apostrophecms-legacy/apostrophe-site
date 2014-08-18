@@ -26,6 +26,8 @@ function AposSite(options) {
   self.apos = require('apostrophe')();
   self.root = options.root;
   self.rootDir = path.dirname(self.root.filename);
+  self.prefix = options.prefix || '';
+
   // If you don't like our default set of allowed tags and attributes. This must
   // be generous enough to encompass at least all the tags in your styles menu, etc.
   self.sanitizeHtmlOptions = options.sanitizeHtml;
@@ -86,7 +88,7 @@ function AposSite(options) {
   var uploadfsDefaultSettings = {
     backend: 'local',
     uploadsPath: self.rootDir + '/public/uploads',
-    uploadsUrl: '/uploads',
+    uploadsUrl: self.prefix + '/uploads',
     tempPath: self.rootDir + '/data/temp/uploadfs',
     // Register Apostrophe's standard image sizes. Notice you could
     // concatenate your own list of sizes if you had a need to
@@ -191,6 +193,8 @@ function AposSite(options) {
 
     middleware: [ i18n.init ].concat(middleware),
 
+    prefix: self.prefix,
+
     ready: function(appArg, dbArg)
     {
       self.app = appArg;
@@ -258,7 +262,9 @@ function AposSite(options) {
       secondChanceLogin: options.secondChanceLogin,
       redirectAfterLogin: options.redirectAfterLogin,
       lockTags: options.lockTags,
-      files: options.files
+      files: options.files,
+      prefix: self.prefix,
+      prefixCssUrls: appy.prefixCssUrls
     }, callback);
   }
 
