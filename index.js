@@ -264,7 +264,8 @@ function AposSite(options) {
       lockTags: options.lockTags,
       files: options.files,
       prefix: self.prefix,
-      prefixCssUrls: appy.prefixCssUrls
+      prefixCssUrls: appy.prefixCssUrls,
+      oembedWhitelist: options.oembedWhitelist
     }, callback);
   }
 
