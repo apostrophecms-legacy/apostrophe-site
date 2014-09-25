@@ -43,6 +43,20 @@ function AposSite(options) {
     extend(true, options, local);
   }
 
+  // The deployment system populates this file with a
+  // shared unique ID for this deployment of the app.
+  // If not, Apostrophe will gracefully fall back to
+  // an identifier that is sufficiently unique for
+  // single-process operation.
+
+  if (fs.existsSync(self.rootDir + '/data/generation')) {
+    var generation = fs.readFileSync(self.rootDir + '/data/generation', 'utf8');
+    generation = generation.replace(/[^\d]/g, '');
+    if (generation.length) {
+      options.generation = generation;
+    }
+  }
+
   self.uploadfs = uploadfs();
 
   if (!self.root) {
@@ -265,7 +279,8 @@ function AposSite(options) {
       files: options.files,
       prefix: self.prefix,
       prefixCssUrls: appy.prefixCssUrls,
-      oembedWhitelist: options.oembedWhitelist
+      oembedWhitelist: options.oembedWhitelist,
+      generation: options.generation
     }, callback);
   }
 
