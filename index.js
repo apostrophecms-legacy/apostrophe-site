@@ -12,6 +12,7 @@ var extend = require('extend');
 var nodemailer = require('nodemailer');
 var schemas = require('apostrophe-schemas');
 var i18n = require('i18n');
+var argv = require('optimist').argv;
 
 module.exports = function(options) {
   return new AposSite(options);
@@ -27,6 +28,21 @@ function AposSite(options) {
   self.root = options.root;
   self.rootDir = path.dirname(self.root.filename);
   self.prefix = options.prefix || '';
+
+  // The apostrophe:generate task is implemented directly
+  // here because it must generate a new asset generation
+  // ID file before the regular bootstrap process of the
+  // Apostrophe module can begin. TODO: this is a messy hack,
+  // think about a more elegant way. -Tom
+
+  self.generating = (argv._[0] === 'apostrophe:generation');
+
+  if (self.generating) {
+    // New asset generation file. Now the regular
+    // asset builder mechanisms will do the rest of the work
+    var generation = self.apos.generateId();
+    fs.writeFileSync(self.rootDir + '/data/generation', generation);
+  }
 
   // If you don't like our default set of allowed tags and attributes. This must
   // be generous enough to encompass at least all the tags in your styles menu, etc.
@@ -540,7 +556,7 @@ function AposSite(options) {
   }
 
   function pushAssets(callback) {
-    if (self.apos.isTask()) {
+    if (self.apos.isTask() && (!self.generating)) {
       return callback(null);
     }
     _.each((options.assets && options.assets.stylesheets) || [], function(name) {
@@ -570,7 +586,7 @@ function AposSite(options) {
   }
 
   function endAssets(callback) {
-    if (self.apos.isTask()) {
+    if (self.apos.isTask() && (!self.generating)) {
       return callback(null);
     }
     return async.series({
@@ -596,6 +612,10 @@ function AposSite(options) {
   function go(err) {
     if (err) {
       throw err;
+    }
+    if (self.generating) {
+      // An internally implemented task
+      process.exit(0);
     }
     // Command line tasks
     if (self.apos.startTask(options.tasks || {})) {
