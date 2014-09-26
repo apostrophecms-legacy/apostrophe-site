@@ -37,14 +37,16 @@ function AposSite(options) {
 
   self.generating = (argv._[0] === 'apostrophe:generation');
 
+  var generation;
+
   if (self.generating) {
     // New asset generation file. Now the regular
     // asset builder mechanisms will do the rest of the work.
     //
     // Do not put it in the data/ folder, we want it to be
     // deployment-specific.
-    var generation = self.apos.generateId();
-    fs.writeFileSync(self.rootDir + '/generation', generation);
+    generation = self.apos.generateId();
+    fs.writeFileSync(self.rootDir + '/data/generation', generation);
   }
 
   // If you don't like our default set of allowed tags and attributes. This must
@@ -68,8 +70,8 @@ function AposSite(options) {
   // an identifier that is sufficiently unique for
   // single-process operation.
 
-  if (fs.existsSync(self.rootDir + '/generation')) {
-    var generation = fs.readFileSync(self.rootDir + '/generation', 'utf8');
+  if (fs.existsSync(self.rootDir + '/data/generation')) {
+    generation = fs.readFileSync(self.rootDir + '/data/generation', 'utf8');
     generation = generation.replace(/[^\d]/g, '');
     if (generation.length) {
       options.generation = generation;
