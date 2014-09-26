@@ -184,11 +184,7 @@ function AposSite(options) {
   });
 
   appy.bootstrap({
-    // We're not sure if appy is installed as our dependency
-    // or as the project's, but we know that WE are a direct
-    // dependency of the project. So we are able to tell
-    // appy where the project's root folder is.
-    rootDir: path.dirname(path.dirname(__dirname)),
+    rootDir: self.rootDir,
 
     // Allows gzip transfer encoding to be shut off if desired
     compress: options.compress,
