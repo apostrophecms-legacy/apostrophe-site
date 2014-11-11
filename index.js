@@ -315,6 +315,7 @@ function AposSite(options) {
   function initPages(callback) {
     var pagesOptions = {};
     extend(true, pagesOptions, options.pages);
+
     pagesOptions.apos = self.apos;
     pagesOptions.app = self.app;
     pagesOptions.schemas = self.schemas;
@@ -533,6 +534,35 @@ function AposSite(options) {
 
     // The merged loaders must win
     pagesOptions.load = loaders;
+
+    // Allow each module to take a crack
+    // at handling 404 not found. Let the
+    // app level code have a go at it too
+
+    var appNotfound = pagesOptions.notfound;
+    pagesOptions.notfound = function(req, finalCallback) {
+      var handlers = [];
+      _.each(self.modules, function(module) {
+        if (module.notfound) {
+          handlers.push(module.notfound);
+        }
+      });
+      if (appNotfound) {
+        handlers.push(appNotfound);
+      }
+      return async.eachSeries(handlers, function(handler, callback) {
+        return handler(req, function(err) {
+          if (err) {
+            return callback(err);
+          }
+          if (req.redirect || (!req.notfound)) {
+            // Handled!
+            return finalCallback(null);
+          }
+          return callback(null);
+        });
+      }, finalCallback);
+    };
 
     var serve = self.pages.serve(pagesOptions);
 
