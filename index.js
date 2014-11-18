@@ -189,6 +189,10 @@ function AposSite(options) {
     // Allows gzip transfer encoding to be shut off if desired
     compress: options.compress,
 
+    // Split CSS files when too large for <=IE9, but only
+    // if requested
+    bless: options.bless,
+
     auth: (options.auth === undefined) ? self.apos.appyAuth({
       loginPage: function(data, req) {
         // TODO: this is a hack and doesn't allow for some other module to
@@ -277,6 +281,7 @@ function AposSite(options) {
     return self.apos.init({
       db: self.db,
       app: self.app,
+      bless: options.bless,
       uploadfs: self.uploadfs,
       locals: self.locals,
       filterTag: options.filterTag,
