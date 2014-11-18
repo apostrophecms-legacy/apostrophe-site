@@ -99,6 +99,15 @@ Here's an `app.js` that demonstrates most of the options. Most of this is option
 
       sessionSecret: 'SOMETHING RANDOM PLEASE',
 
+      // Minify all CSS and JS into a single file each (can be fine-tuned
+      // with other options). Great in production
+      minify: true,
+
+      // If the generated CSS has more than 4,095 rules, split into
+      // multiple imported CSS files to avoid a limitation of IE9 and below.
+      // This is disabled by default
+      bless: false,
+
       // Any options accepted by the apostrophe-pages module,
       // such as tabOptions and descendantOptions
       pages: {
