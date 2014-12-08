@@ -569,6 +569,12 @@ function AposSite(options) {
       }, finalCallback);
     };
 
+    if (options.secondChanceLogin === true) {
+      // Make a note of the most recent Apostrophe page they saw,
+      // to redirect to after login
+      pagesOptions.updateAposAfterLogin = true;
+    }
+
     var serve = self.pages.serve(pagesOptions);
 
     // All this does is call app.get('*', ... some middleware ... , serve) but
