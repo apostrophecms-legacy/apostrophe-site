@@ -184,6 +184,8 @@ function AposSite(options) {
   });
 
   appy.bootstrap({
+    passport: options.passport,
+
     rootDir: self.rootDir,
 
     // Allows gzip transfer encoding to be shut off if desired
