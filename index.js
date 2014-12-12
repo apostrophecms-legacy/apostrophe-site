@@ -111,6 +111,8 @@ function AposSite(options) {
     // appy where the project's root folder is.
     rootDir: path.dirname(path.dirname(__dirname)),
 
+    passport: options.passport,
+
     // Allows gzip transfer encoding to be shut off if desired
     compress: options.compress,
 
