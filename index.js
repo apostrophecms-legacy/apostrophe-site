@@ -231,7 +231,7 @@ function AposSite(options) {
       self.app = appArg;
       self.db = dbArg;
 
-      async.series([ createTemp, initUploadfs, initApos, initSchemas, initPages, initModules, bridgeModules, setRoutes, servePages, pushAssets, endAssets, afterInit ], go);
+      async.series([ createTemp, initUploadfs, initApos, initSchemas, initPages, appendModels, initModules, bridgeModules, setRoutes, servePages, pushAssets, endAssets, afterInit ], go);
     }
   });
 
@@ -330,6 +330,37 @@ function AposSite(options) {
     });
   }
 
+  // Scans app/schemas and requires models
+  function appendModels(callback) {
+    var appFolder = [self.rootDir, '/app'].join('/');
+    var schemasFolder = [appFolder, 'schemas'].join('/');
+    var viewsFolder = [appFolder, 'views'].join('/');
+    var models = {};
+
+    fs.readdirSync(schemasFolder).forEach(function(file) {
+      var model = require([schemasFolder, file].join('/'));
+      var modelName = file.match(/[^\/]*(?=\.[^.]+($|\?))/)[0];
+
+      var name;
+
+      // Special sauce for prettier model names without breaking apostrophe subclassing
+      if (model.aposName) {
+        name = model.aposName;
+        delete model.aposName;
+      } else {
+        name = modelName;
+      }
+      // Throwing this in to handle MVC entities separately in initModules
+      model.mvc = true;
+      model.modelName = modelName;
+      model.viewsFolder = [viewsFolder, modelName].join('/');
+
+      options.modules[name] = model;
+    });
+
+    return callback(null);
+  }
+
   function initModules(callback) {
     self.modules = {};
     var modulesConfig = options.modules || [];
@@ -346,8 +377,18 @@ function AposSite(options) {
         schemas: self.schemas,
         mailer: self.mailer
       });
-      var localFolder = self.rootDir + '/lib/modules/' + name;
-      var localIndex = localFolder + '/index.js';
+      var localFolder;
+      var localIndex;
+      var localViews;
+      if (config.mvc) {
+        localFolder = [self.rootDir, 'app'].join('/');
+        localIndex = [localFolder, 'controllers', config.modelName + 'Controller.js'].join('/');
+        localViews = [localFolder, 'views', config.modelName].join('/');
+      } else {
+        localFolder = self.rootDir + '/lib/modules/' + name;
+        localIndex = localFolder + '/index.js';
+      }
+      console.log(localIndex);
       var npmName = config.extend || name;
       var localFound = false;
       var npmFound = false;
@@ -413,7 +454,12 @@ function AposSite(options) {
             // served by this local module, prefixing it with 'my'. It'll also get passed
             // through apos.cssName. So "apostrophe-blog" becomes /my-blog.
             var myConstructor = guessConstructor(name);
-            options.modules = (options.modules || []).concat([{ dir: localFolder, name: 'my' + myConstructor }]);
+            // Throw in different views folder for MVC
+            if (config.mvc) {
+              options.modules = (options.modules || []).concat([{ dir: localFolder, name: 'my' + myConstructor, viewsFolder: localViews }]);
+            } else {
+              options.modules = (options.modules || []).concat([{ dir: localFolder, name: 'my' + myConstructor }]);
+            }
             return Super.call(self, options, callback);
           };
           var inlineFactory = function(options, callback) {
@@ -476,6 +522,43 @@ function AposSite(options) {
         }
         if (!self.modules[name]) {
           throw 'No module found for ' + name;
+        }
+
+        // Override default template routing to use MVC conventions
+        if (config.mvc) {
+          var module = self.modules[name];
+          module.renderer = function(name, req) {
+            return function(data, reqAnonymous) {
+              req = reqAnonymous || req;
+              if (!data) {
+                data = {};
+              }
+              _.defaults(data, module._rendererGlobals);
+              return self.apos.partial(req, name, data, _.map(module._modules, function(module) { 
+                // If MVC, override views path
+                if (module.viewsFolder) {
+                  return module.viewsFolder;
+                }
+                return module.dir + '/views';
+              }));
+            };
+          };
+
+          module.rendererString = function(s) {
+            return function(data) {
+              if (!data) {
+                data = {};
+              }
+              _.defaults(data, module._rendererGlobals);
+              return self.apos.partialString(s, data, _.map(module._modules, function(module) { 
+                // If MVC, override views path
+                if (module.viewsFolder) {
+                  return module.viewsFolder;
+                }
+                return module.dir + '/views'; 
+              }));
+            };
+          };
         }
         return callback(null);
       });
