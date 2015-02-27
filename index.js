@@ -281,7 +281,7 @@ function AposSite(options) {
       locals: self.locals,
       filterTag: options.filterTag,
       // Allows us to extend shared layouts
-      partialPaths: [ self.rootDir + '/views/global' ],
+      partialPaths: [ self.rootDir + '/app/views/global' ],
       minify: self.minify,
       sanitizeHtml: self.sanitizeHtmlOptions,
       mediaLibrary: options.mediaLibrary || {},
@@ -609,7 +609,7 @@ function AposSite(options) {
     // Extend sensible defaults with custom settings
     var pagesOptions = {};
     extend(true, pagesOptions, {
-      templatePath: self.rootDir + '/views/pages',
+      templatePath: self.rootDir + '/app/views/pages',
       secondChanceLogin: options.secondChanceLogin
     });
     extend(true, pagesOptions, options.pages || {});
