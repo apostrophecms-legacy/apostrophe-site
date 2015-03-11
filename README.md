@@ -264,6 +264,39 @@ Here's an `app.js` that demonstrates most of the options. Most of this is option
 
 ```
 
+## Two-Step Configuration
+
+If you prefer you can configure Apostrophe in two steps:
+
+```javascript
+var site = require('apostrophe-site')();
+site.init({ ... same configuration as above ... });
+```
+
+This allows you to pass your site object to functions implemented in other files in order to create parts of your configuration:
+
+```javascript
+// in app.js
+
+var site = require('apostrophe-site')();
+site.init({
+  // ... regular stuff ...
+  pages: {
+    load: require('./lib/loaders.js')(site)
+  }
+});
+
+// in lib/loaders.js
+
+module.exports = function(site) {
+  return [
+    function(req, callback) {
+      site.apos.doSomethingInteresting(callback);
+    }
+  ]
+};
+```
+
 ## Adding Modules to the Admin Bar
 
 Adding a module to the `modules` property above does most of the work, but you do need to add it to the admin bar when appropriate. For instance, you'll want the "blog" menu to be added at the top of the page when the blog module is installed.
