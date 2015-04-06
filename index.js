@@ -227,6 +227,9 @@ function AposSite(options) {
         collections: (options.db && options.db.collections) || []
       },
 
+      address: options.address,
+      port: options.port,
+
       // Supplies LESS middleware
       static: self.rootDir + '/public',
 
