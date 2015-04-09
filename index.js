@@ -242,7 +242,7 @@ function AposSite(options) {
         self.app = appArg;
         self.db = dbArg;
 
-        async.series([ createTemp, initUploadfs, initApos, initSchemas, initPages, initModules, bridgeModules, setRoutes, servePages, pushAssets, endAssets, afterInit ], go);
+        async.series([ createTemp, initUploadfs, initApos, initSchemas, initPages, initModules, bridgeModules, setRoutes, servePages, endAssets, afterInit ], go);
       }
     });
 
@@ -604,9 +604,9 @@ function AposSite(options) {
       return callback(null);
     }
 
-    function pushAssets(callback) {
+    function pushAssets() {
       if (self.apos.isTask() && (!self.generating)) {
-        return callback(null);
+        return;
       }
       _.each((options.assets && options.assets.stylesheets) || [], function(name) {
         if (typeof(name) === 'object') {
@@ -631,13 +631,15 @@ function AposSite(options) {
         extend(true, options, _options);
         return self.apos.pushAsset(type, name, options);
       }
-      return callback();
     }
 
     function endAssets(callback) {
       if (self.apos.isTask() && (!self.generating)) {
         return callback(null);
       }
+      // We are the last to add a handler, so our
+      // assets go last
+      self.apos.on('beforeEndAssets', pushAssets);
       return async.series({
         beforeEndAssets: function(callback) {
           if (!options.beforeEndAssets) {
@@ -645,6 +647,7 @@ function AposSite(options) {
           }
           return options.beforeEndAssets(callback);
         },
+        // now we're ready to let apostrophe minify, etc.
         endAssets: function(callback) {
           return self.apos.endAssets(callback);
         }
