@@ -285,6 +285,12 @@ function AposSite(options) {
       // that apostrophe-site doesn't consume, so I don't
       // have to endlessly add new options here. -Tom
 
+      if (!options.baseUrl) {
+        if (options.hostName) {
+          options.baseUrl = 'http://' + options.hostName;
+        }
+      }
+
       return self.apos.init({
         db: self.db,
         app: self.app,
@@ -309,7 +315,8 @@ function AposSite(options) {
         prefix: self.prefix,
         prefixCssUrls: appy.prefixCssUrls,
         oembedWhitelist: options.oembedWhitelist,
-        generation: options.generation
+        generation: options.generation,
+        baseUrl: options.baseUrl
       }, callback);
     }
 

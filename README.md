@@ -16,7 +16,7 @@ Create a new git project, then run `npm install apostrophe-site` to install the 
 
 ## Configuring Your Site
 
-Here's an `app.js` that demonstrates most of the options. Most of this is optional, of course. `root`, `shortName`, `hostName`, `adminPassword` and `sessionSecret` are required, and you almost certainly will want to add a few modules. Everything else is totally skippable.
+Here's an `app.js` that demonstrates most of the options. Most of this is optional, of course. `root`, `shortName`, `hostName`, `adminPassword` and `sessionSecret` are required, and you almost certainly will want to add a few modules. You shoudl also set `baseUrl` if the protocol for your site is not HTTP. Everything else is totally skippable.
 
 ```javascript
 
@@ -31,6 +31,9 @@ Here's an `app.js` that demonstrates most of the options. Most of this is option
 
       // Hostname you plan to give your site
       hostName: 'mysite.com',
+
+      // If we don't set this, we get http://mysite.com
+      baseUrl: 'https://mysite.com',
 
       // Title of your site. Used as a prefix to page titles and feed titles by default
       title: 'My Site',
