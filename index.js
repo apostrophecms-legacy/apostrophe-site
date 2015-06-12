@@ -243,7 +243,12 @@ function AposSite(options) {
         self.db = dbArg;
 
         async.series([ createTemp, initUploadfs, initApos, initSchemas, initPages, initModules, bridgeModules, setRoutes, servePages, endAssets, afterInit ], go);
-      }
+      },
+
+      // allow arguments to be passed to the session
+      // store by appy
+      sessions: self.options.sessions
+
     });
 
     function addSiteToMiddleware(fn) {
