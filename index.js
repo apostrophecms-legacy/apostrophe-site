@@ -327,7 +327,8 @@ function AposSite(options) {
         prefixCssUrls: appy.prefixCssUrls,
         oembedWhitelist: options.oembedWhitelist,
         generation: options.generation,
-        baseUrl: options.baseUrl
+        baseUrl: options.baseUrl,
+        maxLoaderRecursion: options.maxLoaderRecursion
       }, callback);
     }
 
