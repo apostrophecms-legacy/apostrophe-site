@@ -144,7 +144,13 @@ function AposSite(options) {
       transport: 'sendmail',
       transportOptions: {},
     });
+
     self.mailer = nodemailer.createTransport(mailerOptions.transport, mailerOptions.transportOptions);
+
+    // Expose additional options via the mailer object as a workaround
+    // for all this apostrophe-site silliness. -Tom
+    self.mailer.aposOptions = {};
+    _.assign(self.mailer.aposOptions, _.omit(mailerOptions, 'transport', 'transportOptions'));
 
     var i18nOptions = options.i18n || {};
     _.defaults(i18nOptions, {
