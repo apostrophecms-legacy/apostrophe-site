@@ -290,6 +290,8 @@ function AposSite(options) {
     function initApos(callback) {
       // Let the apostrophe module know to pass the site object as the first
       // argument to tasks that accept a fourth argument
+      self.apos._site = self;
+      // for bc
       self.apos._taskContext = self;
 
       // TODO: this should probably get everything
