@@ -191,6 +191,24 @@ function AposSite(options) {
       iterate();
     });
 
+    if (!self.options.sessionCore) {
+      self.options.sessionCore = {};
+    }
+    if (!self.options.sessionCore.key) {
+      // distinguish our sid, useful if multiple a2 apps are on one domain
+      self.options.sessionCore.key = self.options.shortName + '.sid';
+    }
+    if (!self.options.sessionCore.cookie) {
+      self.options.sessionCore.cookie = { httpOnly: true, secure: false, maxAge: null };
+    }
+    if (!self.options.sessionCore.cookie.path) {
+      var cookiePath = '/';
+      if (self.prefix) {
+        cookiePath = self.prefix;
+      }
+      self.options.sessionCore.cookie.path = cookiePath;
+    }
+
     appy.bootstrap({
       passport: options.passport,
 
@@ -251,10 +269,11 @@ function AposSite(options) {
         async.series([ createTemp, initUploadfs, initApos, initSchemas, initPages, initModules, bridgeModules, setRoutes, servePages, endAssets, afterInit ], go);
       },
 
-      // allow arguments to be passed to the session
-      // store by appy
-      sessions: self.options.sessions
+      // allow arguments to be passed to the session store and the
+      // core session middleware. For bc accept .sessions as sessionStore
 
+      sessionStore: self.options.sessionStore || self.options.sessions,
+      sessionCore: self.options.sessionCore
     });
 
     function addSiteToMiddleware(fn) {
