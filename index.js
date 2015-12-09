@@ -209,7 +209,7 @@ function AposSite(options) {
       self.options.sessionCore.cookie.path = cookiePath;
     }
 
-    appy.bootstrap({
+    var appyOptions = {
       passport: options.passport,
 
       rootDir: self.rootDir,
@@ -274,7 +274,13 @@ function AposSite(options) {
 
       sessionStore: self.options.sessionStore || self.options.sessions,
       sessionCore: self.options.sessionCore
-    });
+    };
+
+    // Ability to pass options directly to appy, take care as this can crush things above that matter
+    if (options.appy) {
+      _.assign(appyOptions, options.appy);
+    }
+    appy.bootstrap(appyOptions);
 
     function addSiteToMiddleware(fn) {
       if (fn.length > 3) {
