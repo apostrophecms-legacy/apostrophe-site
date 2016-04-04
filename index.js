@@ -122,10 +122,16 @@ function AposSite(options) {
     });
     self.minify = options.minify;
 
+    if (!options.baseUrl) {
+      if (options.hostName) {
+        options.baseUrl = 'http://' + options.hostName;
+      }
+    }
+
     var uploadfsDefaultSettings = {
       backend: 'local',
       uploadsPath: self.rootDir + '/public/uploads',
-      uploadsUrl: self.prefix + '/uploads',
+      uploadsUrl: options.absoluteUrls ? (options.baseUrl + self.prefix + '/uploads') : (self.prefix + '/uploads'),
       tempPath: self.rootDir + '/data/temp/uploadfs',
       // Register Apostrophe's standard image sizes. Notice you could
       // concatenate your own list of sizes if you had a need to
@@ -319,16 +325,6 @@ function AposSite(options) {
       // for bc
       self.apos._taskContext = self;
 
-      // TODO: this should probably get everything
-      // that apostrophe-site doesn't consume, so I don't
-      // have to endlessly add new options here. -Tom
-
-      if (!options.baseUrl) {
-        if (options.hostName) {
-          options.baseUrl = 'http://' + options.hostName;
-        }
-      }
-
       return self.apos.init({
         db: self.db,
         app: self.app,
@@ -355,6 +351,7 @@ function AposSite(options) {
         oembedWhitelist: options.oembedWhitelist,
         generation: options.generation,
         baseUrl: options.baseUrl,
+        absoluteUrls: options.absoluteUrls,
         maxLoaderRecursion: options.maxLoaderRecursion
       }, callback);
     }
