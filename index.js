@@ -29,6 +29,12 @@ function AposSite(options) {
     self.apos = require('apostrophe')();
     self.root = options.root;
     self.rootDir = path.dirname(self.root.filename);
+
+    // stagecoach typically launches apostrophe via forever and does so with a full path to app.js.
+    // Newer versions of forever chdir to / when you do this, which breaks apostrophe-browserify.
+    // Resolving this by consistently changing directory to the app at startup. -Tom and Jimmy
+    process.chdir(self.rootDir);
+
     self.prefix = options.prefix || '';
 
     // The apostrophe:generate task is implemented directly
