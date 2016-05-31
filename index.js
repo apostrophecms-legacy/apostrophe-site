@@ -339,7 +339,7 @@ function AposSite(options) {
         locals: self.locals,
         filterTag: options.filterTag,
         // Allows us to extend shared layouts
-        partialPaths: [ self.rootDir + '/views/global' ],
+        partialPaths: [ self.rootDir + '/views/global', self.rootDir + '/views/pages' ],
         minify: self.minify,
         sanitizeHtml: self.sanitizeHtmlOptions,
         mediaLibrary: options.mediaLibrary || {},
