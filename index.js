@@ -185,7 +185,9 @@ function AposSite(options) {
       self.db = dbArg;
 
       async.series([ createTemp, initUploadfs, initApos, initSchemas, initPages, initModules, bridgeModules, setRoutes, servePages, pushAssets, endAssets, afterInit ], go);
-    }
+    },
+
+    middleware: options.middleware
   });
 
   function createTemp(callback) {
