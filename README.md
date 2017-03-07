@@ -1,8 +1,14 @@
+# THIS MODULE IS FOR 0.5.X ONLY, DEPRECATED FOR ALL NEW PROJECTS
+
+You do not need this module for your new Apostrophe project and it will not work with it. See the [apostrophe documentation](http://apostrophecms.org) for more information about Apostrophe 2.x which has all of the capabilities of this module built right in.
+
 # Apostrophe Site
 
-The Apostrophe Site module makes it easy to build websites with the [Apostrophe](http://github.com/punkave/apostrophe) content management system for Node.
+The Apostrophe Site module provides most of the scaffolding for projects built with Apostrophe 0.5.x, an OLD version of the Apostrophe content management system. You do not want this for your new project.
 
 ## Installation
+
+**Don't, you should only find this module in a legacy project you are maintaining. These are old instructions.**
 
 It is easiest to start by cloning the [Apostrophe sandbox project](http://github.com/punkave/apostrophe-sandbox) and pushing it up to your own repository. But skipping that step is pretty easy too. Let's assume you're starting from scratch.
 
