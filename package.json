@@ -1,7 +1,7 @@
 {
   "name": "apostrophe-site",
-  "version": "0.5.50",
-  "description": "Create sites powered by the Apostrophe 2 CMS with a minimum of boilerplate code",
+  "version": "0.6.0",
+  "description": "DEPRECATED, for legacy 0.5 sites only. Create sites powered by the Apostrophe 0.5 CMS with a minimum of boilerplate code",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -17,7 +17,7 @@
     "apostrophe": "~0.5.x",
     "apostrophe-pages": "~0.5.x",
     "apostrophe-schemas": "~0.5.x",
-    "appy": "~0.5.0",
+    "appy": "~0.6.0",
     "async": "0.8.x",
     "extend": "~1.2.0",
     "i18n": "0.4.1",
