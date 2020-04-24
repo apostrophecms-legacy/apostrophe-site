@@ -355,6 +355,7 @@ function AposSite(options) {
         prefix: self.prefix,
         prefixCssUrls: appy.prefixCssUrls,
         oembedWhitelist: options.oembedWhitelist,
+        oembedEndpoints: options.oembedEndpoints,
         generation: options.generation,
         baseUrl: options.baseUrl,
         absoluteUrls: options.absoluteUrls,
