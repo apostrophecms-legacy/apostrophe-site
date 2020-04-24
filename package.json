@@ -19,7 +19,7 @@
     "apostrophe-schemas": "~0.5.x",
     "appy": "~0.6.0",
     "async": "0.8.x",
-    "extend": "~1.2.0",
+    "extend": "~3.0.2",
     "i18n": "0.4.1",
     "lodash": "2.4.x",
     "nodemailer": "~0.6.0",
